@@ -1,5 +1,7 @@
 import numpy as np
-
+# Potrebno je napraviti predikciju cene nekretnine
+# na osnovu njene povrsine.
+# Na grafiku je prikazano da je cena
 # linearna funkcija povrsine (koeficijenti c1, c0):
 # y_target = X_features * c1 + c0
 class LinearRegressionGradientDescent:
@@ -66,7 +68,7 @@ class LinearRegressionGradientDescent:
         self.mse_history = []
         for i in range(num_iterations):
             _, curr_cost = self.gradient_descent_step(learning_rate)
-        self.mse_history.append(curr_cost)
+            self.mse_history.append(curr_cost)
         return self.coeff, self.mse_history
 
     # features mora biti DataFrame

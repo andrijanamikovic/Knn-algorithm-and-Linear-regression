@@ -21,8 +21,8 @@ class KnnImpl:
         for i in range(len(self.x)):
             euclidean = calculate_euclidean(self.x[i], sample)
             distance.append((self.y[i], euclidean))
-            distance.sort(key=lambda x: x[1])  # sort in ascending order, based on a distance value
-            neighbors = []
+        neighbors = []
+        distance.sort(key=lambda x: x[1])  # sort in ascending order, based on a distance value
         for i in range(self.k):  # get first k samples
             neighbors.append(distance[i][0])
         return neighbors

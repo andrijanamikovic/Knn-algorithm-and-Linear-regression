@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from sklearn.metrics import r2_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.linear_model import LinearRegression
@@ -43,6 +44,109 @@ data.FUELCONSUMPTION_COMB = data.FUELCONSUMPTION_COMB.fillna(data.FUELCONSUMPTIO
 data.FUELCONSUMPTION_HWY = data.FUELCONSUMPTION_HWY.fillna(data.FUELCONSUMPTION_HWY.mean())
 
 #Prikaz grafika...
+#Zavisnost kontinualnih atributa koriscenjem korelacione matrice
+corr_matrix = data.select_dtypes(include=np.number).corr()
+sb.heatmap(corr_matrix, annot=True, square=True, fmt='.1f')
+# plt.show()
+
+#Zavisnost izlaznog od svih kontinualnih ulaznih, reasejavajuci tacke po Dekartovom koordinatnom
+
+X = data.loc[:, ['MODELYEAR']]
+y = data['CO2EMISSIONS']
+plt.figure('Dependency CO2EMISSIONS from MODELYEAR')
+plt.scatter(X, y, s=23, c='red', marker='o', alpha=0.7,
+edgecolors='black', linewidths=2, label='MODELYEAR')
+plt.xlabel('MODELYEAR', fontsize=10)
+plt.ylabel('CO2EMISSIONS', fontsize=10)
+plt.title('Dependency CO2EMISSIONS from MODELYEAR')
+plt.legend()
+plt.tight_layout()
+# plt.show()
+
+X = data.loc[:, ['ENGINESIZE']]
+plt.figure('Dependency v from ENGINESIZE')
+plt.scatter(X, y, s=23, c='blue', marker='o', alpha=0.7,
+edgecolors='black', linewidths=2, label='ENGINESIZE')
+plt.xlabel('ENGINESIZE', fontsize=10)
+plt.ylabel('CO2EMISSIONS', fontsize=10)
+plt.title('Dependency CO2EMISSIONS from ENGINESIZE')
+plt.legend()
+plt.tight_layout()
+
+X = data.loc[:, ['CYLINDERS']]
+plt.figure('Dependency CO2EMISSIONS from CYLINDERS')
+plt.scatter(X, y, s=23, c='blue', marker='o', alpha=0.7,
+edgecolors='black', linewidths=2, label='CYLINDERS')
+plt.xlabel('CYLINDERS', fontsize=10)
+plt.ylabel('CO2EMISSIONS', fontsize=10)
+plt.title('Dependency CO2EMISSIONS from CYLINDERS')
+plt.legend()
+plt.tight_layout()
+
+X = data.loc[:, ['FUELCONSUMPTION_CITY']]
+plt.figure('Dependency CO2EMISSIONS from FUELCONSUMPTION_CITY')
+plt.scatter(X, y, s=23, c='blue', marker='o', alpha=0.7,
+edgecolors='black', linewidths=2, label='FUELCONSUMPTION_CITY')
+plt.xlabel('FUELCONSUMPTION_CITY', fontsize=10)
+plt.ylabel('CO2EMISSIONS', fontsize=10)
+plt.title('Dependency CO2EMISSIONS from FUELCONSUMPTION_CITY')
+plt.legend()
+plt.tight_layout()
+
+X = data.loc[:, ['FUELCONSUMPTION_HWY']]
+plt.figure('Dependency CO2EMISSIONS from FUELCONSUMPTION_HWY')
+plt.scatter(X, y, s=23, c='blue', marker='o', alpha=0.7,
+edgecolors='black', linewidths=2, label='FUELCONSUMPTION_HWY')
+plt.xlabel('FUELCONSUMPTION_HWY', fontsize=10)
+plt.ylabel('CO2EMISSIONS', fontsize=10)
+plt.title('Dependency CO2EMISSIONS from FUELCONSUMPTION_HWY')
+plt.legend()
+plt.tight_layout()
+
+X = data.loc[:, ['FUELCONSUMPTION_COMB']]
+plt.figure('Dependency CO2EMISSIONS from FUELCONSUMPTION_COMB')
+plt.scatter(X, y, s=23, c='yellow', marker='o', alpha=0.7,
+edgecolors='black', linewidths=2, label='FUELCONSUMPTION_COMB')
+plt.xlabel('FUELCONSUMPTION_COMB', fontsize=10)
+plt.ylabel('CO2EMISSIONS', fontsize=10)
+plt.title('Dependency CO2EMISSIONS from FUELCONSUMPTION_COMB')
+plt.legend()
+plt.tight_layout()
+
+X = data.loc[:, ['FUELCONSUMPTION_COMB_MPG']]
+plt.figure('Dependency CO2EMISSIONS from FUELCONSUMPTION_COMB_MPG')
+plt.scatter(X, y, s=23, c='green', marker='o', alpha=0.7,
+edgecolors='black', linewidths=2, label='FUELCONSUMPTION_COMB_MPG')
+plt.xlabel('FUELCONSUMPTION_COMB_MPG', fontsize=10)
+plt.ylabel('CO2EMISSIONS', fontsize=10)
+plt.title('Dependency CO2EMISSIONS from FUELCONSUMPTION_COMB_MPG')
+plt.legend()
+plt.tight_layout()
+# plt.show()
+
+#6. graficki prikaz izlaznog atributa od svakog kategorickog atributa koristeci odgovarajuci tip grafika
+
+plt.figure('Dependency CO2EMISSIONS from MAKE')
+sb.barplot(x='MAKE', y='CO2EMISSIONS', data=data)
+plt.xticks(rotation=90)
+
+plt.figure('Dependency CO2EMISSIONS from MODEL')
+graph = sb.barplot(x='MODEL', y='CO2EMISSIONS', data=data)
+plt.xticks([])
+
+plt.figure('Dependency CO2EMISSIONS from vehicle VEHICLECLASS')
+sb.barplot(x='VEHICLECLASS', y='CO2EMISSIONS', data=data)
+plt.xticks(rotation=90)
+
+plt.figure('Dependency co2emission from TRANSMISSION')
+sb.barplot(x='TRANSMISSION', y='CO2EMISSIONS', data=data)
+plt.xticks(rotation=90)
+
+plt.figure('Dependency CO2EMISSIONS from FUELTYPE')
+sb.barplot(x='FUELTYPE', y='CO2EMISSIONS', data=data)
+plt.xticks(rotation=90)
+plt.show()
+
 
 def absolute_maximum_scale(series):
     return series / series.abs().max()
@@ -57,8 +161,7 @@ def absolute_maximum_scale(series):
 for col in ['ENGINESIZE', 'CYLINDERS', 'FUELCONSUMPTION_CITY', 'FUELCONSUMPTION_HWY', 'FUELCONSUMPTION_COMB',
             'FUELCONSUMPTION_COMB_MPG', 'CO2EMISSIONS']:
     data[col] = absolute_maximum_scale(data[col])
-data_train = data.loc[:, ['ENGINESIZE', 'CYLINDERS', 'FUELTYPE', 'FUELCONSUMPTION_CITY', 'FUELCONSUMPTION_HWY',
-                          'FUELCONSUMPTION_COMB', 'FUELCONSUMPTION_COMB_MPG']]
+data_train = data.loc[:, ['ENGINESIZE', 'FUELCONSUMPTION_COMB', 'FUELCONSUMPTION_HWY',  'CYLINDERS', 'FUELTYPE']]
 labels = data.loc[:, 'CO2EMISSIONS']
 print(data_train.head())
 
@@ -83,39 +186,25 @@ res_df = pd.concat([X_test, y_test, ser_predicted], axis=1)
 print(res_df)
 print('Model score: ', lr_model.score(X_test, y_test))
 
-# Ovde moram nesto da podesavam nmp
-# fig, axis = plt.subplots(1, 1, figsize=(8, 3), dpi=500)
-# tree.plot_tree(decision_tree=dtc_model, max_depth=3, feature_names=data_train.columns, class_names=['CO2EMISSIONS'], fontsize=3, filled=True)
-# fig.savefig('tree.png')
-# plt.close()
-# sb.heatmap(data_train.corr(), annot=True, fmt=.2)
-# plt.show()
-
-
-
 # Kreiranje i obucavanje modela
 lrgd = LinearRegressionGradientDescent()
 lrgd.fit(X_train, y_train)
-learning_rates = np.array([[0.17], [0.0000475], [0.15], [0.2], [0.17], [0.0000475], [0.15], [0.2], [0.17], [0.0000475], [0.15]])
-res_coeff, mse_history = lrgd.perform_gradient_descent(learning_rates, 20)
-# print(res_coeff)
+print("X_train? ", X_train)
+learning_rates = np.array([[0.001], [0.01], [0.01], [0.01], [0.01], [0.0001], [0.0001], [0.001], [0.01]])
+res_coeff, mse_history = lrgd.perform_gradient_descent(learning_rates, 100)
 # Vizuelizacija modela
-# Stampanje mse za oba modela
-lrgd.set_coefficients(res_coeff)
-print(f'LRGD MSE: {lrgd.cost():.2f}')
-c = np.concatenate((np.array([lr_model.intercept_]), lr_model.coef_))
-lrgd.set_coefficients(c)
-print(f'LR MSE: {lrgd.cost():.2f}')
-# Restauracija koeficijenata
-lrgd.set_coefficients(res_coeff)
-# Zapamte se koeficijenti LR modela,
-# da bi se postavili LRGD koeficijenti i izracunao LR score.
-lr_coef_ = lr_model.coef_
-lr_int_ = lr_model.intercept_
-lr_model.coef_ = lrgd.coeff.flatten()[1:]
-lr_model.intercept_ = lrgd.coeff.flatten()[0]
-print(f'LRGD score: {lr_model.score(X_test, y_test):.2f}')
-# Restauriraju se koeficijenti LR modela
-lr_model.coef_ = lr_coef_
-lr_model.intercept_ = lr_int_
-print(f'LR score: {lr_model.score(X_test, y_test):.2f}')
+plt.figure('MS Error')
+plt.plot(np.arange(0, len(mse_history)), mse_history)
+plt.title('MS Error')
+plt.show()
+# plt.show()
+
+#
+y_train_copy = y_train.copy(deep=True)
+labels_predicted = lrgd.predict(X_test) * (y_train_copy.max() - y_train_copy.min()) + y_train_copy.min()
+ser_predicted = pd.Series(data=labels_predicted, name='Predicted', index=X_test.index)
+res_df = pd.concat([X_test, y_test, ser_predicted], axis=1)
+
+print("Predikcije linearne regresije metodom gradijentnig spusta:\n", res_df)
+# print('score: ', r2_score(np.array(y_test), labels_predicted), end='\n \n')
+print('R^2 score: ', r2_score(np.array(y_test), labels_predicted), end='\n \n')
